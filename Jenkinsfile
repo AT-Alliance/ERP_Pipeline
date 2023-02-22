@@ -275,9 +275,9 @@ foreach ($it in $listeDLLs) {
 	}
 
 }'''
-						println "Purge \'$DirToPurge\' success!!"
+            println "Launch DLLs in \'$DestinationDir\\$BaseOutputDirectory\' success!!"
 					} catch (err){
-						println "Purge \'$DirToPurge\' failed: ${err}!!"
+            println "Launch DLLs in \'$DestinationDir\\$BaseOutputDirectory\' failed: ${err}!!"
 					}
 				}
 
