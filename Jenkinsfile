@@ -70,7 +70,7 @@ $count++
 
         stage('ERP_C-2_CopyWorkspaceLivrables') {
           environment {
-            SourceDir = 'C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master'
+            SourceDir = 'C:\Jenkins\JenkinsHome\workspace\ERP_main'
             DestinationDir = 'C:\\Livrables'
             BaseOutputDirectory = 'All_dotnet'
           }
@@ -79,7 +79,7 @@ $count++
               try {
                 // Get some code from a svn trunk repository
                 powershell '''
-#$SourceDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
+#$SourceDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
 #$SourceDirectory = "\\\\aci-cicd\\Livrables\\All_dotnet\\Tests.*"
 $SourceDirectory="$($env:SourceDir)"
 #$DestinationDirectory = "\\\\ALLIANCE-VM03\\c$\\Livrables"
@@ -163,7 +163,7 @@ $count++
               try {
                 // Get some code from a svn trunk repository
                 powershell '''
-#$SourceDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
+#$SourceDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
 #$SourceDirectory = "\\\\aci-cicd\\Livrables\\All_dotnet\\Tests.*"
 $SourceDirectory="$($env:SourceDir)"
 #$DestinationDirectory = "\\\\ALLIANCE-VM03\\c$\\Livrables"
