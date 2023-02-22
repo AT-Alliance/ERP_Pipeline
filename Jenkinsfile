@@ -70,7 +70,7 @@ $count++
 
         stage('ERP_C-2_CopyWorkspaceLivrables') {
           environment {
-            SourceDir = 'C:\Jenkins\JenkinsHome\workspace\ERP_main'
+            SourceDir = 'C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main'
             DestinationDir = 'C:\\Livrables'
             BaseOutputDirectory = 'All_dotnet'
           }
