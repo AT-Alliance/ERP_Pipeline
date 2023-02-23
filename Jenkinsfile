@@ -265,28 +265,55 @@ $rep="Tests.Commun"
       }
       steps {
         script {
-          try {
-            powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
+          powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
 
-$BaseOutputRootDirectory="$($env:BaseOutputRootDir)"
 #$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
-#$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
-$GenererateAngularOrNot="$($env:GenererAngular)"
-#$GenererateAngularOrNot="Oui"
+$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
 
-Try {
+$InstallInAngular_PortageOrNot = "Oui"
+#$InstallInAngular_PortageOrNot="$($env:InstallInAngular_PortageOrNot)"
+$InstallInAngular_TableauDeBordOrNot = "Oui"
+#$InstallInAngular_TableauDeBordOrNot="$($env:InstallInAngular_TableauDeBordOrNot)"
 
-    if ($GenererateAngularOrNot -eq "Oui") {
-      Set-Location "$($BaseOutputRootDirectory)\\Portage.Angular\\app\\src"
-      . npm install
+$listeDirs=\'Portage.Angular\\app\',\'TableauDeBord.Angular\\tableauDeBord\'
+
+function installNPM {
+
+    param (
+        $rep
+    )
+
+    Try {
+
+        Set-Location $($rep)
+        . npm install
+        "`nInstallation NPM in \'$($rep)\' success!!"
+        "`n-------------------------"
+
+    } catch {
+                
+        "`nInstallation NPM in \'$($rep)\' failed: ${err}!!"
+        "`n-------------------------"
     }
-} catch {
-    "An error occurred: $_"
+
+}
+
+
+foreach ($it in $listeDirs) {
+	
+    $repert = "$($BaseOutputRootDirectory)\\$($it)\\src"
+                    
+    if ( ($InstallInAngular_PortageOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
+        
+        installNPM -rep $repert
+
+    } elseif ( ($InstallInAngular_TableauDeBordOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
+            
+        installNPM -rep $repert
+
+    }
+    
 }'''
-            println "Install NPM success!!"
-          } catch (err){
-            println "Install NPM failed: ${err}!!"
-          }
         }
 
       }
