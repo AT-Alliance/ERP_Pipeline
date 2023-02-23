@@ -260,7 +260,23 @@ $rep="Tests.Commun"
 
     stage('ERP_E_InstallNpm') {
       steps {
-        powershell '"aaa"'
+        powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
+
+#$BaseOutputRootDirectory="${WORKSPACE}"
+#$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
+$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
+#$GenererateAngularOrNot="$($env:GenererAngular)"
+$GenererateAngularOrNot="Oui"
+
+Try {
+
+    if ($GenererateAngularOrNot -eq "Oui") {
+      Set-Location "$($BaseOutputRootDirectory)\\Portage.Angular\\app\\src"
+      . npm install
+    }
+} catch {
+    "An error occurred: $_"
+}'''
       }
     }
 
