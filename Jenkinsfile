@@ -326,7 +326,7 @@ installNPM -rep $repert
       }
       steps {
         script {
-            powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
+          powershell '''# --- DEBUT PORTAGE -------------------------------------------------------------------------------------------------
 
 #$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
 $BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
@@ -340,46 +340,51 @@ $listeDirs=\'Portage.Angular\\app\',\'TableauDeBord.Angular\\tableauDeBord\'
 
 function RunNPM {
 
-    param (
-        $rep
-    )
+param (
+$rep
+)
 
-    Try {
+Try {
 
-        Set-Location $($rep)
-        . npm run build -- --configuration production
-        "`nRun Build in \'$($rep)\' success!!"
-        "`n-------------------------"
+Set-Location $($rep)
+. npm run build -- --configuration production
+"`nRun Build in \'$($rep)\' success!!"
+"`n-------------------------"
 
-    } catch {
-                
-        "`nRun Build in \'$($rep)\' failed: ${err}!!"
-        "`n-------------------------"
-    }
+} catch {
+
+"`nRun Build in \'$($rep)\' failed: ${err}!!"
+"`n-------------------------"
+}
 
 }
 
 
 foreach ($it in $listeDirs) {
-  
-    $repert = "$($BaseOutputRootDirectory)\\$($it)\\src"
-                    
-    if ( ($InstallInAngular_PortageOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
-        
-        RunNPM -rep $repert
 
-    } elseif ( ($InstallInAngular_TableauDeBordOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
-            
-        RunNPM -rep $repert
+$repert = "$($BaseOutputRootDirectory)\\$($it)\\src"
 
-    }
-    
+if ( ($InstallInAngular_PortageOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
+
+RunNPM -rep $repert
+
+} elseif ( ($InstallInAngular_TableauDeBordOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
+
+RunNPM -rep $repert
+
+}
+
 }'''
         }
 
       }
     }
-  
+
+    stage('ERP_G_CopyFilesToSPA') {
+      steps {
+        powershell '"aaa"'
+      }
+    }
 
   }
 }
