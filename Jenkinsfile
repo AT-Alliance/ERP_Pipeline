@@ -219,17 +219,18 @@ $count++
 
     stage('ERP_D_LaunchDLLs') {
       environment {
-        DestinationDir = 'C:\\Livrables'
-        BaseOutputDirectory = 'All_dotnet'
+        BaseOutputRootDir = 'C:\\Livrables'
+        BaseOutputDir = 'All_dotnet'
       }
       steps {
         script {
           try {
             powershell '''$vstestDir="C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\Common7\\IDE\\Extensions\\TestPlatform"
 $listeDLLs=\'Common.DaosTests.dll\',\'Common.ServicesTests.dll\',\'CommonTests.dll\'
-$BaseOutputRootDirectory="C:\\Livrables"
-$BaseOutputDirectory="All_dotnet"
-#$BaseOutputDirectory=""
+#$BaseOutputRootDirectory="C:\\Livrables"
+$BaseOutputRootDirectory="$($env:BaseOutputRootDir)"
+#$BaseOutputDirectory="All_dotnet"
+$BaseOutputDirectory="$($env:BaseOutputDir)"
 foreach ($it in $listeDLLs) {
 Try {
 if ( $it -eq "Common.DaosTests.dll" ) {
@@ -248,9 +249,9 @@ $rep="Tests.Commun"
 "`n-------------------------`n"
 }
 }'''
-            println "Launch DLLs in \'$DestinationDir\\$BaseOutputDirectory\' success!!"
+            println "Launch DLLs in \'$BaseOutputRootDir\\$BaseOutputDir\' success!!"
           } catch (err){
-            println "Launch DLLs in \'$DestinationDir\\$BaseOutputDirectory\' failed: ${err}!!"
+            println "Launch DLLs in \'$BaseOutputRootDir\\$BaseOutputDir\' failed: ${err}!!"
           }
         }
 
@@ -258,16 +259,20 @@ $rep="Tests.Commun"
     }
 
     stage('ERP_E_InstallNpm') {
+      environment {
+        BaseOutputRootDir = 'C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main'
+        GenererAngular = 'Oui'
+      }
       steps {
         script {
           try {
             powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
 
-#$BaseOutputRootDirectory="${WORKSPACE}"
+$BaseOutputRootDirectory="$($env:BaseOutputRootDir)"
 #$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
-$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
-#$GenererateAngularOrNot="$($env:GenererAngular)"
-$GenererateAngularOrNot="Oui"
+#$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
+$GenererateAngularOrNot="$($env:GenererAngular)"
+#$GenererateAngularOrNot="Oui"
 
 Try {
 
