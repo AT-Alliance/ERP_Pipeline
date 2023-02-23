@@ -326,7 +326,6 @@ installNPM -rep $repert
       }
       steps {
         script {
-          try {
             powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
 
 #$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
@@ -380,7 +379,7 @@ foreach ($it in $listeDirs) {
 
       }
     }
-  }
+  
 
   }
 }
