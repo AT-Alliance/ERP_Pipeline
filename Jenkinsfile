@@ -265,7 +265,7 @@ $rep="Tests.Commun"
       }
       steps {
         script {
-          powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
+          powershell '''# --- DEBUT PORTAGE -------------------------------------------------------------------------------------------------
 
 #$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
 $BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
@@ -279,43 +279,49 @@ $listeDirs=\'Portage.Angular\\app\',\'TableauDeBord.Angular\\tableauDeBord\'
 
 function installNPM {
 
-    param (
-        $rep
-    )
+param (
+$rep
+)
 
-    Try {
+Try {
 
-        Set-Location $($rep)
-        . npm install
-        "`nInstallation NPM in \'$($rep)\' success!!"
-        "`n-------------------------"
+Set-Location $($rep)
+. npm install
+"`nInstallation NPM in \'$($rep)\' success!!"
+"`n-------------------------"
 
-    } catch {
-                
-        "`nInstallation NPM in \'$($rep)\' failed: ${err}!!"
-        "`n-------------------------"
-    }
+} catch {
+
+"`nInstallation NPM in \'$($rep)\' failed: ${err}!!"
+"`n-------------------------"
+}
 
 }
 
 
 foreach ($it in $listeDirs) {
-	
-    $repert = "$($BaseOutputRootDirectory)\\$($it)\\src"
-                    
-    if ( ($InstallInAngular_PortageOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
-        
-        installNPM -rep $repert
 
-    } elseif ( ($InstallInAngular_TableauDeBordOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
-            
-        installNPM -rep $repert
+$repert = "$($BaseOutputRootDirectory)\\$($it)\\src"
 
-    }
-    
+if ( ($InstallInAngular_PortageOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
+
+installNPM -rep $repert
+
+} elseif ( ($InstallInAngular_TableauDeBordOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
+
+installNPM -rep $repert
+
+}
+
 }'''
         }
 
+      }
+    }
+
+    stage('ERP_F_RunBuildNPM') {
+      steps {
+        powershell '"aaa"'
       }
     }
 
