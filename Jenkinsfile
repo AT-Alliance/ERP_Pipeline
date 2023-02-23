@@ -320,10 +320,67 @@ installNPM -rep $repert
     }
 
     stage('ERP_F_RunBuildNPM') {
+      environment {
+        InstallInAngular_PortageOrNot = 'Oui'
+        InstallInAngular_TableauDeBordOrNot = 'Oui'
+      }
       steps {
-        powershell '"aaa"'
+        script {
+          try {
+            powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
+
+#$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
+$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
+
+$InstallInAngular_PortageOrNot = "Oui"
+#$InstallInAngular_PortageOrNot="$($env:InstallInAngular_PortageOrNot)"
+$InstallInAngular_TableauDeBordOrNot = "Oui"
+#$InstallInAngular_TableauDeBordOrNot="$($env:InstallInAngular_TableauDeBordOrNot)"
+
+$listeDirs=\'Portage.Angular\\app\',\'TableauDeBord.Angular\\tableauDeBord\'
+
+function RunNPM {
+
+    param (
+        $rep
+    )
+
+    Try {
+
+        Set-Location $($rep)
+        . npm run build -- --configuration production
+        "`nRun Build in \'$($rep)\' success!!"
+        "`n-------------------------"
+
+    } catch {
+                
+        "`nRun Build in \'$($rep)\' failed: ${err}!!"
+        "`n-------------------------"
+    }
+
+}
+
+
+foreach ($it in $listeDirs) {
+  
+    $repert = "$($BaseOutputRootDirectory)\\$($it)\\src"
+                    
+    if ( ($InstallInAngular_PortageOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
+        
+        RunNPM -rep $repert
+
+    } elseif ( ($InstallInAngular_TableauDeBordOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
+            
+        RunNPM -rep $repert
+
+    }
+    
+}'''
+        }
+
       }
     }
+  }
 
   }
 }
