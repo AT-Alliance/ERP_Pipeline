@@ -219,43 +219,49 @@ $count++
 
     stage('ERP_D_LaunchDLLs') {
       environment {
-				DestinationDir = "C:\\Livrables"
-				BaseOutputDirectory = "All_dotnet"
-			}
-			steps {
-				script {
-					try {
-						powershell '''$vstestDir="C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\Common7\\IDE\\Extensions\\TestPlatform"
+        DestinationDir = 'C:\\Livrables'
+        BaseOutputDirectory = 'All_dotnet'
+      }
+      steps {
+        script {
+          try {
+            powershell '''$vstestDir="C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\Common7\\IDE\\Extensions\\TestPlatform"
 $listeDLLs=\'Common.DaosTests.dll\',\'Common.ServicesTests.dll\',\'CommonTests.dll\'
 $BaseOutputRootDirectory="C:\\Livrables"
 $BaseOutputDirectory="All_dotnet"
 #$BaseOutputDirectory=""
 foreach ($it in $listeDLLs) {
-	Try {
-        if ( $it -eq "Common.DaosTests.dll" ) {
-		    $rep="Tests.Daos"
-        } elseif ( $it -eq "Common.ServicesTests.dll" ) {
-            $rep="Tests.Services"
-        } elseif ( $it -eq "CommonTests.dll" ) {
-            $rep="Tests.Commun"
-        }
-        
-        . "$($vstestDir)\\vstest.console.exe" "$($BaseOutputRootDirectory)\\$($BaseOutputDirectory)\\$($rep)\\$($it)"
-        "`nExecution terminée sans erreur pour \'$($rep)\\$($it)\' !!`n"
-        "-------------------------`n"
-	} catch {
-        "`nErreur lors de l\'execution de \'$($rep)\\$($it)\' !!`n"
-		"An error occurred: $_"
-        "`n-------------------------`n"
-	}
-}'''
-						println "Launch DLLs in \'$DestinationDir\\$BaseOutputDirectory\' success!!"
-					} catch (err){
-						println "Launch DLLs in \'$DestinationDir\\$BaseOutputDirectory\' failed: ${err}!!"
-					}
-				}
+Try {
+if ( $it -eq "Common.DaosTests.dll" ) {
+$rep="Tests.Daos"
+} elseif ( $it -eq "Common.ServicesTests.dll" ) {
+$rep="Tests.Services"
+} elseif ( $it -eq "CommonTests.dll" ) {
+$rep="Tests.Commun"
+}
 
-			}
+. "$($vstestDir)\\vstest.console.exe" "$($BaseOutputRootDirectory)\\$($BaseOutputDirectory)\\$($rep)\\$($it)"
+"`nExecution terminée sans erreur pour \'$($rep)\\$($it)\' !!`n"
+"-------------------------`n"
+} catch {
+"`nErreur lors de l\'execution de \'$($rep)\\$($it)\' !!`n"
+"An error occurred: $_"
+"`n-------------------------`n"
+}
+}'''
+            println "Launch DLLs in \'$DestinationDir\\$BaseOutputDirectory\' success!!"
+          } catch (err){
+            println "Launch DLLs in \'$DestinationDir\\$BaseOutputDirectory\' failed: ${err}!!"
+          }
+        }
+
+      }
+    }
+
+    stage('ERP_E_InstallNpm') {
+      steps {
+        powershell '"aaa"'
+      }
     }
 
   }
