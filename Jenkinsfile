@@ -239,7 +239,6 @@ $rep="Tests.Services"
 } elseif ( $it -eq "CommonTests.dll" ) {
 $rep="Tests.Commun"
 }
-
 . "$($vstestDir)\\vstest.console.exe" "$($BaseOutputRootDirectory)\\$($BaseOutputDirectory)\\$($rep)\\$($it)"
 "`nExecution terminée sans erreur pour \'$($rep)\\$($it)\' !!`n"
 "-------------------------`n"
@@ -260,7 +259,9 @@ $rep="Tests.Commun"
 
     stage('ERP_E_InstallNpm') {
       steps {
-        powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
+        script {
+          try {
+            powershell '''# --- DEBUT PORTAGE ------------------------------------------------------------------------------------------------- 
 
 #$BaseOutputRootDirectory="${WORKSPACE}"
 #$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
@@ -277,6 +278,12 @@ Try {
 } catch {
     "An error occurred: $_"
 }'''
+            println "Install NPM success!!"
+          } catch (err){
+            println "Install NPM failed: ${err}!!"
+          }
+        }
+
       }
     }
 
