@@ -381,19 +381,35 @@ RunNPM -rep $repert
     }
 
     stage('ERP_G_CopyFilesToSPA') {
+      environment {
+        SourceDir = 'C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main'
+        DestinationDir = 'C:\\Livrables\\All_dotnet'
+        DestinationDirName1 = 'Portage.Web\\SPA'
+        DestinationDirName2 = 'TableauDeBord.Web\\SPA'
+        DestinationDirName3 = 'TableauDeBord.Web\\SPA\\assets\\Conges'
+        DestinationDirName4 = 'TableauDeBord.Web\\SPA\\assets\\javascripts'
+        DestinationDirName5 = 'TableauDeBord.Web\\SPA\\assets\\img'
+        DestinationDirName6 = 'TableauDeBord.Web\\SPA\\assets'
+      }
       steps {
-        powershell '''$SourceDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
+        powershell '''
+#$SourceDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
 #$SourceDirectory = "\\\\aci-cicd\\Livrables\\All_dotnet\\Tests.*"
-#$SourceDirectory="$($env:SourceDir)"
-$DestinationDirectory = "C:\\Livrables\\All_dotnet"
-#$DestinationDirectory="$($env:DestinationDir)"
-$DestinationDirectoryName1 = "Portage.Web\\SPA"
-$DestinationDirectoryName2 = "TableauDeBord.Web\\SPA"
-$DestinationDirectoryName3 = "TableauDeBord.Web\\SPA\\assets\\Conges"
-$DestinationDirectoryName4 = "TableauDeBord.Web\\SPA\\assets\\javascripts"
-$DestinationDirectoryName5 = "TableauDeBord.Web\\SPA\\assets\\img"
-$DestinationDirectoryName6 = "TableauDeBord.Web\\SPA\\assets"
-#$DestinationDirectoryName="$($env:BaseOutputDirectory)"
+$SourceDirectory="$($env:SourceDir)"
+#$DestinationDirectory = "C:\\Livrables\\All_dotnet"
+$DestinationDirectory="$($env:DestinationDir)"
+#$DestinationDirectoryName1 = "Portage.Web\\SPA"
+$DestinationDirectoryName1="$($env:DestinationDirName1)"
+#$DestinationDirectoryName2 = "TableauDeBord.Web\\SPA"
+$DestinationDirectoryName2="$($env:DestinationDirName2)"
+#$DestinationDirectoryName3 = "TableauDeBord.Web\\SPA\\assets\\Conges"
+$DestinationDirectoryName3="$($env:DestinationDirName3)"
+#$DestinationDirectoryName4 = "TableauDeBord.Web\\SPA\\assets\\javascripts"
+$DestinationDirectoryName4="$($env:DestinationDirName4)"
+#$DestinationDirectoryName5 = "TableauDeBord.Web\\SPA\\assets\\img"
+$DestinationDirectoryName5="$($env:DestinationDirName5)"
+#$DestinationDirectoryName6 = "TableauDeBord.Web\\SPA\\assets"
+$DestinationDirectoryName6="$($env:DestinationDirName6)"
 
 #Creation des arborescences
 if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName1)") -and ($($DestinationDirectoryName1) -ne "") ) {
