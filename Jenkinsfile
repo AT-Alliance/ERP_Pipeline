@@ -382,7 +382,193 @@ RunNPM -rep $repert
 
     stage('ERP_G_CopyFilesToSPA') {
       steps {
-        powershell '"aaa"'
+        powershell '''$SourceDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
+#$SourceDirectory = "\\\\aci-cicd\\Livrables\\All_dotnet\\Tests.*"
+#$SourceDirectory="$($env:SourceDir)"
+$DestinationDirectory = "C:\\Livrables\\All_dotnet"
+#$DestinationDirectory="$($env:DestinationDir)"
+$DestinationDirectoryName1 = "Portage.Web\\SPA"
+$DestinationDirectoryName2 = "TableauDeBord.Web\\SPA"
+$DestinationDirectoryName3 = "TableauDeBord.Web\\SPA\\assets\\Conges"
+$DestinationDirectoryName4 = "TableauDeBord.Web\\SPA\\assets\\javascripts"
+$DestinationDirectoryName5 = "TableauDeBord.Web\\SPA\\assets\\img"
+$DestinationDirectoryName6 = "TableauDeBord.Web\\SPA\\assets"
+#$DestinationDirectoryName="$($env:BaseOutputDirectory)"
+
+#Creation des arborescences
+if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName1)") -and ($($DestinationDirectoryName1) -ne "") ) {
+    
+    New-Item -ItemType Directory "$($DestinationDirectory)\\$($DestinationDirectoryName1)"
+    "`nLe repertoire \'$($DestinationDirectoryName1)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
+    "-------------------------"
+} 
+if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName2)") -and ($($DestinationDirectoryName2) -ne "") ) {
+    
+    New-Item -ItemType Directory "$($DestinationDirectory)\\$($DestinationDirectoryName2)"
+    "`nLe repertoire \'$($DestinationDirectoryName2)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
+    "-------------------------"
+}
+if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName3)") -and ($($DestinationDirectoryName3) -ne "") ) {
+    
+    New-Item -ItemType Directory "$($DestinationDirectory)\\$($DestinationDirectoryName3)"
+    "`nLe repertoire \'$($DestinationDirectoryName3)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
+    "-------------------------"
+}
+if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName4)") -and ($($DestinationDirectoryName4) -ne "") ) {
+    
+    New-Item -ItemType Directory "$($DestinationDirectory)\\$($DestinationDirectoryName4)"
+    "`nLe repertoire \'$($DestinationDirectoryName4)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
+    "-------------------------"
+}
+if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName5)") -and ($($DestinationDirectoryName5) -ne "") ) {
+    
+    New-Item -ItemType Directory "$($DestinationDirectory)\\$($DestinationDirectoryName5)"
+    "`nLe repertoire \'$($DestinationDirectoryName5)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
+    "-------------------------"
+}
+
+if ( Test-Path $($SourceDirectory) ) {
+        
+    $DestinationDirectory1="$($DestinationDirectory)\\$($DestinationDirectoryName1)"
+    
+    #Copy In $DestinationDirectory1
+    if ( Test-Path $($DestinationDirectory1) ) {
+        $countCSS=0
+        $source1="$($SourceDirectory)\\Portage.Angular\\app\\dist\\app"
+                
+        $SourceDirectoryFilesCSS11 = gci $source1 | Where-Object { $_.Extension -eq ".css" }
+        "Copy .css file from \'$($source1)\'"
+        $SourceDirectoryFilesCSS11 |%{
+            "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory1)\'"
+		    Copy-Item $_.FullName -Destination "$($DestinationDirectory1)" -Force
+            $countCSS++
+        }
+        "---"
+        $source2="$($SourceDirectory)\\TableauDeBord.Angular\\tableauDeBord\\dist\\tableau-de-bord"
+        $SourceDirectoryFilesCSS12 = gci $source2 | Where-Object { $_.Extension -eq ".css" }
+        "Copy .css file from \'$($source2)\'"
+        $SourceDirectoryFilesCSS12 |%{
+            "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory1)\'"
+            Copy-Item $_.FullName -Destination "$($DestinationDirectory1)" -Force
+            $countCSS++
+        }
+        "---"
+        "$($countCSS) file(s) \'.css\' copied"
+	    "---"
+        "-------------------------"
+        
+        $countJS=0
+        "Copy .js file from \'$($source1)\'"
+        $SourceDirectoryFilesJS11 = gci $source1 | Where-Object { $_.Extension -eq ".js" }
+        $SourceDirectoryFilesJS11 |%{
+            "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory1)\'"
+		    Copy-Item $_.FullName -Destination "$($DestinationDirectory1)" -Force
+            $countJS++
+        }
+        "---"
+        "$($countJS) file(s) \'.js\' copied"
+	    "---"
+    }
+
+    $DestinationDirectory2="$($DestinationDirectory)\\$($DestinationDirectoryName2)"   
+    #Copy In $DestinationDirectory2
+    if ( Test-Path $($DestinationDirectory2) ) {
+        "-------------------------`n"
+        $countJS=0
+        $source="$($SourceDirectory)\\TableauDeBord.Angular\\tableauDeBord\\dist\\tableau-de-bord"
+        "Copy .js file from \'$($source)\'"
+
+        $SourceDirectoryFilesJS=gci $source | Where-Object { $_.Extension -eq ".js" }
+        $SourceDirectoryFilesJS |%{
+            "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory2)\'"
+		    Copy-Item $_.FullName -Destination "$($DestinationDirectory2)" -Force
+            $countJS++
+        }
+        "---"
+        "$($countJS) file(s) \'.js\' copied"
+	    "---"
+    }
+
+    $DestinationDirectory3="$($DestinationDirectory)\\$($DestinationDirectoryName3)"
+    #Copy In $DestinationDirectory3
+    if ( Test-Path $($DestinationDirectory3) ) {
+        "-------------------------`n"
+        $countJS=0
+        $source="$($SourceDirectory)\\TableauDeBord.Angular\\tableauDeBord\\dist\\tableau-de-bord\\assets\\Conges"
+        "Copy .js file from \'$($source)\'"
+
+        $SourceDirectoryFilesJS=gci $source | Where-Object { $_.Extension -eq ".js" }
+        $SourceDirectoryFilesJS |%{
+            "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory3)\'"
+		    Copy-Item $_.FullName -Destination "$($DestinationDirectory3)" -Force
+            $countJS++
+        }
+        "---"
+        "$($countJS) file(s) \'.js\' copied"
+	    "---"
+    }
+
+    $DestinationDirectory4="$($DestinationDirectory)\\$($DestinationDirectoryName4)"
+    #Copy In $DestinationDirectory4
+    if ( Test-Path $($DestinationDirectory4) ) {
+        "-------------------------`n"
+        $countJS=0
+        $source="$($SourceDirectory)\\TableauDeBord.Angular\\tableauDeBord\\dist\\tableau-de-bord\\assets\\javascripts"
+        "Copy .js file from \'$($source)\'"
+
+        $SourceDirectoryFilesJS=gci $source | Where-Object { $_.Extension -eq ".js" }
+        $SourceDirectoryFilesJS |%{
+            "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory4)\'"
+		    Copy-Item $_.FullName -Destination "$($DestinationDirectory4)" -Force
+            $countJS++
+        }
+        "---"
+        "$($countJS) file(s) \'.js\' copied"
+	    "---"
+    }
+
+    $DestinationDirectory5="$($DestinationDirectory)\\$($DestinationDirectoryName5)"
+    #Copy In $DestinationDirectory5
+    if ( Test-Path $($DestinationDirectory5) ) {
+        "-------------------------`n"
+        $countPNG=0
+        $source="$($SourceDirectory)\\Portage.Angular\\app\\dist\\app\\assets\\img"
+        "Copy .png file from \'$($source)\'"
+
+        $SourceDirectoryFilesPNG=gci $source | Where-Object { $_.Extension -eq ".png" }
+        $SourceDirectoryFilesPNG |%{
+            "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory5)\'"
+		    Copy-Item $_.FullName -Destination "$($DestinationDirectory5)" -Force
+            $countPNG++
+        }
+        "---"
+        "$($countPNG) file(s) \'.png\' copied"
+	    "---"
+    }
+
+    $DestinationDirectory6="$($DestinationDirectory)\\$($DestinationDirectoryName6)"
+    #Copy In $DestinationDirectory6
+    if ( Test-Path $($DestinationDirectory6) ) {    
+        "-------------------------`n"
+        $countPNG=0
+        $source="$($SourceDirectory)\\TableauDeBord.Angular\\tableauDeBord\\dist\\tableau-de-bord\\assets"
+        "Copy .png file from \'$($source)\'"
+
+        $SourceDirectoryFilesPNG=gci $source | Where-Object { $_.Extension -eq ".png" }
+        $SourceDirectoryFilesPNG |%{
+            "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory6)\'"
+		    Copy-Item $_.FullName -Destination "$($DestinationDirectory6)" -Force
+            $countPNG++
+        }
+        "---"
+        "$($countPNG) file(s) \'.png\' copied"
+	    "---"
+    }
+
+} else {
+    "Erreur!!! Verifier l\'existence des repertoires source et destination!!"
+}
+'''
       }
     }
 
