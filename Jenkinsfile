@@ -48,12 +48,6 @@ $count++
           }
         }
 
-        stage('ERP_B-3_GetLastCommit') {
-          steps {
-            powershell '"aaaa"'
-          }
-        }
-
       }
     }
 
