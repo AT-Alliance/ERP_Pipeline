@@ -58,7 +58,7 @@ $count++
           steps {
             powershell '''
 $SvnBin = "$($env:SvnBinEnv)"
-$SvnRepositoryUrl = "$($env:SvnRepositoryUrlEnv)"
+$SvnRepositoryUrl = "https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk"
 $BaseOutputDirectory = "$($env:BaseOutputDirectoryEnv)"
 $BaseOutputRootDirectory = "$($env:BaseOutputRootDirectoryEnv)"
 $BaseOutputDirectory = "$($env:BaseOutputDirectoryEnv)"
