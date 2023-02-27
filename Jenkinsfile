@@ -590,7 +590,60 @@ if ( Test-Path $($SourceDirectory) ) {
 
     stage('ERP_H_CopyCommitFile_BuildDirectory') {
       steps {
-        powershell '"aaa"'
+        powershell '''$SvnBin = "C:\\Program Files\\TortoiseSVN\\bin\\svn"
+$SvnRepositoryUrl = "https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk"
+
+$BaseOutputRootDirectory = "C:\\Livrables"
+$BaseOutputDirectory = "All_dotnet"
+$DestinationDirectory = "$($BaseOutputRootDirectory)\\$($BaseOutputDirectory)"
+$DestinationDirectoryName = "SvnFolderForDelivery"
+
+if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName)") -and ($($DestinationDirectoryName) -ne "") ) {
+    
+    New-Item -ItemType Directory "$($DestinationDirectory)\\$($DestinationDirectoryName)"
+    "`nLe repertoire \'$($DestinationDirectoryName)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
+    "-------------------------"
+}
+
+$DestinationDirectory="$($DestinationDirectory)\\$($DestinationDirectoryName)"
+
+if ( Test-Path $($DestinationDirectory) ) {
+    
+    try {
+        . "$SvnBin info $SvnRepositoryUrl --username atjenkins --password atjenkins" | Out-File "$($DestinationDirectory)\\svn_lastest_commit.txt" -Encoding default --trust-server-cert-failures="other,unknown-ca,cn-mismatch,expired"
+    } catch {
+        "An error occurred: $_"
+    }
+
+    $timeStamp = Get-Date -Format "yyyy-MM-dd-HH-mm-ss"
+    $buildDirectory = "$($DestinationDirectory)\\build_$($timeStamp)"
+
+    if ( -not (Test-Path "$($buildDirectory)") ) {
+    
+        New-Item -ItemType Directory "$($buildDirectory)"
+        "`nLe repertoire \'$($buildDirectory)\' inexistant a ete créé `n"
+        "-------------------------"
+    }
+
+    #Copy svn_lastest_commit.txt file to SourceDirectory    
+    $SourceDirectory = "\\\\aci-cicd\\Livrables\\All_dotnet\\SvnFolderForDelivery\\"
+    $SourceDirectoryFiles = gci $SourceDirectory -File    
+    $SourceDirectoryFiles |%{
+        Copy-Item $_.FullName -Destination "$($DestinationDirectory)" -Force
+        Copy-Item $_.FullName -Destination "$($buildDirectory)" -Force
+    }    
+
+    #Copy .dll files to buildDirectory
+    $ListeSourceDirectory = \'\\\\aci-cicd\\Livrables\\All_dotnet\\SvnFolderForDelivery\',\'\\\\aci-cicd\\Livrables\\All_dotnet\\AO\\bin\',\'\\\\aci-cicd\\Livrables\\All_dotnet\\CRA\\bin\',\'\\\\aci-cicd\\Livrables\\All_dotnet\\PayRoll\\bin\',\'\\\\aci-cicd\\Livrables\\All_dotnet\\Portage.Web\\bin\'
+    foreach ( $SourceDirectory in $ListeSourceDirectory ) {
+
+        $SourceDirectoryFiles = gci $SourceDirectory -File | Where-Object { ($_.Name -eq "AO.WebApplication.dll") -or ($_.Name -eq "GCRADC.dll") -or ($_.Name -eq "PayRoll.dll") -or ($_.Name -eq "Web.Portage.dll") }
+        $SourceDirectoryFiles |%{
+
+             Copy-Item $_.FullName -Destination "$($buildDirectory)" -Force
+        }
+    }
+}'''
       }
     }
 
