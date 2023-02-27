@@ -45,9 +45,9 @@ Try {
     "An error occurred: $_"
 }
 '''
-                println "Purge \'$DirToPurge\' success!!"
+                println "Purge \'$DirectoryToPurgeEnv\' success!!"
               } catch (err){
-                println "Purge \'$DirToPurge\' failed: ${err}!!"
+                println "Purge \'$DirectoryToPurgeEnv\' failed: ${err}!!"
               }
             }
           }
