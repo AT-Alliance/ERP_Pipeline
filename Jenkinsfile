@@ -50,7 +50,6 @@ Try {
                 println "Purge \'$DirToPurge\' failed: ${err}!!"
               }
             }
-
           }
         }
 
