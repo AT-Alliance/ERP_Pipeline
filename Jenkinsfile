@@ -1,15 +1,25 @@
 pipeline {
     agent any
     stages {
-        stage('ERP_B-3_GetLastCommit') {
-		      environment {
-            SvnBinEnv = 'C:\\Program Files\\TortoiseSVN\\bin\\svn'
-            SvnRepositoryUrlEnv = 'https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk'
-            BaseOutputRootDirectoryEnv = 'C:\\Livrables'
-            BaseOutputDirectoryEnv = 'All_dotnet'
-          }
-          steps {
-            powershell '''
+      environment {
+          DirectoryToPurgeEnv = 'C:\\Livrables\\All_dotnet'
+          ExcludeFolderEnv = 'SvnFolderForDelivery'
+      }
+        parallel {
+            stage('ERP_B-1_RestoreNuget') {
+              steps {
+                bat '"%WORKSPACE%\\build\\nuget.exe" restore "%WORKSPACE%\\GCRADC.sln"'
+              }
+            }
+            stage('ERP_B-3_GetLastCommit') {
+                environment {
+                SvnBinEnv = 'C:\\Program Files\\TortoiseSVN\\bin\\svn'
+                SvnRepositoryUrlEnv = 'https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk'
+                BaseOutputRootDirectoryEnv = 'C:\\Livrables'
+                BaseOutputDirectoryEnv = 'All_dotnet'
+            }
+            steps {
+                powershell '''
 $SvnBin = "$($env:SvnBinEnv)"
 $SvnRepositoryUrl = "$($env:SvnRepositoryUrlEnv)"
 $BaseOutputDirectory = "$($env:BaseOutputDirectoryEnv)"
@@ -32,8 +42,10 @@ if ( Test-Path $($DestinationDirectory) ) {
         "An error occurred: $_"
     }
 }'''
-          }
+                }
+            }
         }
+        
 
       }
     }
