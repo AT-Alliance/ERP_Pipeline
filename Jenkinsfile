@@ -4,14 +4,14 @@ pipeline {
         stage('ERP_B-3_GetLastCommit') {
 		      environment {
             SvnBinEnv = 'C:\\Program Files\\TortoiseSVN\\bin\\svn'
-            SvnRepositoryUrlEnv = 'https:////alliance-vm03//svn//ERP_ALLIANCE_ARMAND//trunk'
+            SvnRepositoryUrlEnv = 'https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk'
             BaseOutputRootDirectoryEnv = 'C:\\Livrables'
             BaseOutputDirectoryEnv = 'All_dotnet'
           }
           steps {
             powershell '''
 $SvnBin = "$($env:SvnBinEnv)"
-$SvnRepositoryUrl = "https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk"
+$SvnRepositoryUrl = "$($env:SvnRepositoryUrlEnv)"
 $BaseOutputDirectory = "$($env:BaseOutputDirectoryEnv)"
 $BaseOutputRootDirectory = "$($env:BaseOutputRootDirectoryEnv)"
 $BaseOutputDirectory = "$($env:BaseOutputDirectoryEnv)"
