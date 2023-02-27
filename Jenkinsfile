@@ -9,8 +9,7 @@ pipeline {
 
     stage('ParallelStage_1') {
       environment {
-        DirectoryToPurgeEnv = 'C:\\Livrables\\All_dotnet'
-	      ExcludeFolderEnv = 'SvnFolderForDelivery'
+        DirToPurge = 'C:\\Livrables\\All_dotnet'
       }
       parallel {
         stage('ERP_B-1_RestoreNuget') {
@@ -24,69 +23,34 @@ pipeline {
             script {
               try {
                 powershell '''
-$DirectoryToPurgeEnv="$($env:DirectoryToPurgeEnv)"
-$ExcludeFolderEnv="$($env:ExcludeFolderEnv)"
+$DirectoryToPurge="$($env:DirToPurge)"
+#$DirectoryToPurge="C:\\Livrables\\All_dotnet"
 $count=0
-
-#Creer le repertoire de base du livrable s\'il n\'existe pas
-Try {
-    if ( Test-Path $($DirectoryToPurge) ) {
-	    $getAllFilesLivrableDirectory=(gci $DirectoryToPurge | Where-Object { $_.Name -ne "$($ExcludeFolder)" })
-	    $getAllFilesLivrableDirectory |%{
-		    Remove-Item $($_.Fullname) -Recurse -Force
-		    "Item \'$($_.Fullname)\' deleted"
-		    $count++
-	    }
-	    "---"
-	    "$($count) item(s) purgés dans \'$($DirectoryToPurge)\'"
-	    "---"		  
-    }
-} catch {
-    "An error occurred: $_"
+#Creer le repertoire de base du livrable s\\\'il n\\\'existe pas
+if ( Test-Path $($DirectoryToPurge) ) {
+$getAllFilesLivrableDirectory=gci $DirectoryToPurge -File -Recurse
+$getAllFilesLivrableDirectory |%{
+Remove-Item $($_.Fullname) -Recurse -Force
+"Fichier \'$($_.Fullname)\' supprimé"
+$count++
+}
+"---"
+"$($count) fichiers purgés dans \'$($DirectoryToPurge)\'"
+"---"
 }
 '''
-                println "Purge \'$DirectoryToPurgeEnv\' success!!"
+                println "Purge \'$DirToPurge\' success!!"
               } catch (err){
-                println "Purge \'$DirectoryToPurgeEnv\' failed: ${err}!!"
+                println "Purge \'$DirToPurge\' failed: ${err}!!"
               }
             }
+
           }
         }
 
         stage('ERP_B-3_GetLastCommit') {
-		      environment {
-            SvnBinEnv = 'C:\\Program Files\\TortoiseSVN\\bin\\svn'
-            SvnRepositoryUrlEnv = 'https:////alliance-vm03//svn//ERP_ALLIANCE_ARMAND//trunk'
-            BaseOutputRootDirectoryEnv = 'C:\\Livrables'
-            BaseOutputDirectoryEnv = 'All_dotnet'
-          }
           steps {
-            powershell '''
-$SvnBin = "$($env:SvnBinEnv)"
-$SvnRepositoryUrl = "https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk"
-$BaseOutputDirectory = "$($env:BaseOutputDirectoryEnv)"
-$BaseOutputRootDirectory = "$($env:BaseOutputRootDirectoryEnv)"
-$BaseOutputDirectory = "$($env:BaseOutputDirectoryEnv)"
-$DestinationDirectory = "$($BaseOutputRootDirectory)\\$($BaseOutputDirectory)"
-$DestinationDirectoryName = "SvnFolderForDelivery"
-
-if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName)") -and ($($DestinationDirectoryName) -ne "") ) {
-    
-    New-Item -ItemType Directory "$($DestinationDirectory)\\$($DestinationDirectoryName)"
-    "`nLe repertoire \'$($DestinationDirectoryName)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
-    "-------------------------"
-}
-
-$DestinationDirectory="$($DestinationDirectory)\\$($DestinationDirectoryName)"
-
-if ( Test-Path $($DestinationDirectory) ) {
-    
-    try {
-        . "$($SvnBin)" info "$($SvnRepositoryUrl)" --username atjenkins --password atjenkins | Out-File "$($DestinationDirectory)\\svn_lastest_commit.txt"
-    } catch {
-        "An error occurred: $_"
-    }
-}'''
+            powershell '"aaaa"'
           }
         }
 
@@ -308,53 +272,34 @@ $rep="Tests.Commun"
       steps {
         script {
           powershell '''# --- DEBUT PORTAGE -------------------------------------------------------------------------------------------------
-
 #$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
 $BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
-
 $InstallInAngular_PortageOrNot = "Oui"
 #$InstallInAngular_PortageOrNot="$($env:InstallInAngular_PortageOrNot)"
 $InstallInAngular_TableauDeBordOrNot = "Oui"
 #$InstallInAngular_TableauDeBordOrNot="$($env:InstallInAngular_TableauDeBordOrNot)"
-
 $listeDirs=\'Portage.Angular\\app\',\'TableauDeBord.Angular\\tableauDeBord\'
-
 function installNPM {
-
 param (
 $rep
 )
-
 Try {
-
 Set-Location $($rep)
 . npm install
 "`nInstallation NPM in \'$($rep)\' success!!"
 "`n-------------------------"
-
 } catch {
-
 "`nInstallation NPM in \'$($rep)\' failed: ${err}!!"
 "`n-------------------------"
 }
-
 }
-
-
 foreach ($it in $listeDirs) {
-
 $repert = "$($BaseOutputRootDirectory)\\$($it)\\src"
-
 if ( ($InstallInAngular_PortageOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
-
 installNPM -rep $repert
-
 } elseif ( ($InstallInAngular_TableauDeBordOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
-
 installNPM -rep $repert
-
 }
-
 }'''
         }
 
@@ -369,53 +314,34 @@ installNPM -rep $repert
       steps {
         script {
           powershell '''# --- DEBUT PORTAGE -------------------------------------------------------------------------------------------------
-
 #$BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_Pipeline_master"
 $BaseOutputRootDirectory="C:\\Jenkins\\JenkinsHome\\workspace\\ERP_main"
-
 $InstallInAngular_PortageOrNot = "Oui"
 #$InstallInAngular_PortageOrNot="$($env:InstallInAngular_PortageOrNot)"
 $InstallInAngular_TableauDeBordOrNot = "Oui"
 #$InstallInAngular_TableauDeBordOrNot="$($env:InstallInAngular_TableauDeBordOrNot)"
-
 $listeDirs=\'Portage.Angular\\app\',\'TableauDeBord.Angular\\tableauDeBord\'
-
 function RunNPM {
-
 param (
 $rep
 )
-
 Try {
-
 Set-Location $($rep)
 . npm run build -- --configuration production
 "`nRun Build in \'$($rep)\' success!!"
 "`n-------------------------"
-
 } catch {
-
 "`nRun Build in \'$($rep)\' failed: ${err}!!"
 "`n-------------------------"
 }
-
 }
-
-
 foreach ($it in $listeDirs) {
-
 $repert = "$($BaseOutputRootDirectory)\\$($it)\\src"
-
 if ( ($InstallInAngular_PortageOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
-
 RunNPM -rep $repert
-
 } elseif ( ($InstallInAngular_TableauDeBordOrNot -eq "Oui") -and (Test-Path -Path $repert) ) {
-
 RunNPM -rep $repert
-
 }
-
 }'''
         }
 
@@ -452,7 +378,6 @@ $DestinationDirectoryName4="$($env:DestinationDirName4)"
 $DestinationDirectoryName5="$($env:DestinationDirName5)"
 #$DestinationDirectoryName6 = "TableauDeBord.Web\\SPA\\assets"
 $DestinationDirectoryName6="$($env:DestinationDirName6)"
-
 #Creation des arborescences
 if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName1)") -and ($($DestinationDirectoryName1) -ne "") ) {
     
@@ -484,7 +409,6 @@ if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName5)") 
     "`nLe repertoire \'$($DestinationDirectoryName5)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
     "-------------------------"
 }
-
 if ( Test-Path $($SourceDirectory) ) {
         
     $DestinationDirectory1="$($DestinationDirectory)\\$($DestinationDirectoryName1)"
@@ -527,7 +451,6 @@ if ( Test-Path $($SourceDirectory) ) {
         "$($countJS) file(s) \'.js\' copied"
 	    "---"
     }
-
     $DestinationDirectory2="$($DestinationDirectory)\\$($DestinationDirectoryName2)"   
     #Copy In $DestinationDirectory2
     if ( Test-Path $($DestinationDirectory2) ) {
@@ -535,7 +458,6 @@ if ( Test-Path $($SourceDirectory) ) {
         $countJS=0
         $source="$($SourceDirectory)\\TableauDeBord.Angular\\tableauDeBord\\dist\\tableau-de-bord"
         "Copy .js file from \'$($source)\'"
-
         $SourceDirectoryFilesJS=gci $source | Where-Object { $_.Extension -eq ".js" }
         $SourceDirectoryFilesJS |%{
             "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory2)\'"
@@ -546,7 +468,6 @@ if ( Test-Path $($SourceDirectory) ) {
         "$($countJS) file(s) \'.js\' copied"
 	    "---"
     }
-
     $DestinationDirectory3="$($DestinationDirectory)\\$($DestinationDirectoryName3)"
     #Copy In $DestinationDirectory3
     if ( Test-Path $($DestinationDirectory3) ) {
@@ -554,7 +475,6 @@ if ( Test-Path $($SourceDirectory) ) {
         $countJS=0
         $source="$($SourceDirectory)\\TableauDeBord.Angular\\tableauDeBord\\dist\\tableau-de-bord\\assets\\Conges"
         "Copy .js file from \'$($source)\'"
-
         $SourceDirectoryFilesJS=gci $source | Where-Object { $_.Extension -eq ".js" }
         $SourceDirectoryFilesJS |%{
             "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory3)\'"
@@ -565,7 +485,6 @@ if ( Test-Path $($SourceDirectory) ) {
         "$($countJS) file(s) \'.js\' copied"
 	    "---"
     }
-
     $DestinationDirectory4="$($DestinationDirectory)\\$($DestinationDirectoryName4)"
     #Copy In $DestinationDirectory4
     if ( Test-Path $($DestinationDirectory4) ) {
@@ -573,7 +492,6 @@ if ( Test-Path $($SourceDirectory) ) {
         $countJS=0
         $source="$($SourceDirectory)\\TableauDeBord.Angular\\tableauDeBord\\dist\\tableau-de-bord\\assets\\javascripts"
         "Copy .js file from \'$($source)\'"
-
         $SourceDirectoryFilesJS=gci $source | Where-Object { $_.Extension -eq ".js" }
         $SourceDirectoryFilesJS |%{
             "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory4)\'"
@@ -584,7 +502,6 @@ if ( Test-Path $($SourceDirectory) ) {
         "$($countJS) file(s) \'.js\' copied"
 	    "---"
     }
-
     $DestinationDirectory5="$($DestinationDirectory)\\$($DestinationDirectoryName5)"
     #Copy In $DestinationDirectory5
     if ( Test-Path $($DestinationDirectory5) ) {
@@ -592,7 +509,6 @@ if ( Test-Path $($SourceDirectory) ) {
         $countPNG=0
         $source="$($SourceDirectory)\\Portage.Angular\\app\\dist\\app\\assets\\img"
         "Copy .png file from \'$($source)\'"
-
         $SourceDirectoryFilesPNG=gci $source | Where-Object { $_.Extension -eq ".png" }
         $SourceDirectoryFilesPNG |%{
             "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory5)\'"
@@ -603,7 +519,6 @@ if ( Test-Path $($SourceDirectory) ) {
         "$($countPNG) file(s) \'.png\' copied"
 	    "---"
     }
-
     $DestinationDirectory6="$($DestinationDirectory)\\$($DestinationDirectoryName6)"
     #Copy In $DestinationDirectory6
     if ( Test-Path $($DestinationDirectory6) ) {    
@@ -611,7 +526,6 @@ if ( Test-Path $($SourceDirectory) ) {
         $countPNG=0
         $source="$($SourceDirectory)\\TableauDeBord.Angular\\tableauDeBord\\dist\\tableau-de-bord\\assets"
         "Copy .png file from \'$($source)\'"
-
         $SourceDirectoryFilesPNG=gci $source | Where-Object { $_.Extension -eq ".png" }
         $SourceDirectoryFilesPNG |%{
             "`tCopy of \'$($_.Name)\' to \'$($DestinationDirectory6)\'"
@@ -622,7 +536,6 @@ if ( Test-Path $($SourceDirectory) ) {
         "$($countPNG) file(s) \'.png\' copied"
 	    "---"
     }
-
 } else {
     "Erreur!!! Verifier l\'existence des repertoires source et destination!!"
 }
@@ -634,21 +547,17 @@ if ( Test-Path $($SourceDirectory) ) {
       steps {
         powershell '''$SvnBin = "C:\\Program Files\\TortoiseSVN\\bin\\svn"
 $SvnRepositoryUrl = "https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk"
-
 $BaseOutputRootDirectory = "C:\\Livrables"
 $BaseOutputDirectory = "All_dotnet"
 $DestinationDirectory = "$($BaseOutputRootDirectory)\\$($BaseOutputDirectory)"
 $DestinationDirectoryName = "SvnFolderForDelivery"
-
 if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName)") -and ($($DestinationDirectoryName) -ne "") ) {
     
     New-Item -ItemType Directory "$($DestinationDirectory)\\$($DestinationDirectoryName)"
     "`nLe repertoire \'$($DestinationDirectoryName)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
     "-------------------------"
 }
-
 $DestinationDirectory="$($DestinationDirectory)\\$($DestinationDirectoryName)"
-
 if ( Test-Path $($DestinationDirectory) ) {
     
     try {
@@ -656,17 +565,14 @@ if ( Test-Path $($DestinationDirectory) ) {
     } catch {
         "An error occurred: $_"
     }
-
     $timeStamp = Get-Date -Format "yyyy-MM-dd-HH-mm-ss"
     $buildDirectory = "$($DestinationDirectory)\\build_$($timeStamp)"
-
     if ( -not (Test-Path "$($buildDirectory)") ) {
     
         New-Item -ItemType Directory "$($buildDirectory)"
         "`nLe repertoire \'$($buildDirectory)\' inexistant a ete créé `n"
         "-------------------------"
     }
-
     #Copy svn_lastest_commit.txt file to SourceDirectory    
     $SourceDirectory = "\\\\aci-cicd\\Livrables\\All_dotnet\\SvnFolderForDelivery\\"
     $SourceDirectoryFiles = gci $SourceDirectory -File    
@@ -674,14 +580,11 @@ if ( Test-Path $($DestinationDirectory) ) {
         Copy-Item $_.FullName -Destination "$($DestinationDirectory)" -Force
         Copy-Item $_.FullName -Destination "$($buildDirectory)" -Force
     }    
-
     #Copy .dll files to buildDirectory
     $ListeSourceDirectory = \'\\\\aci-cicd\\Livrables\\All_dotnet\\SvnFolderForDelivery\',\'\\\\aci-cicd\\Livrables\\All_dotnet\\AO\\bin\',\'\\\\aci-cicd\\Livrables\\All_dotnet\\CRA\\bin\',\'\\\\aci-cicd\\Livrables\\All_dotnet\\PayRoll\\bin\',\'\\\\aci-cicd\\Livrables\\All_dotnet\\Portage.Web\\bin\'
     foreach ( $SourceDirectory in $ListeSourceDirectory ) {
-
         $SourceDirectoryFiles = gci $SourceDirectory -File | Where-Object { ($_.Name -eq "AO.WebApplication.dll") -or ($_.Name -eq "GCRADC.dll") -or ($_.Name -eq "PayRoll.dll") -or ($_.Name -eq "Web.Portage.dll") }
         $SourceDirectoryFiles |%{
-
              Copy-Item $_.FullName -Destination "$($buildDirectory)" -Force
         }
     }
