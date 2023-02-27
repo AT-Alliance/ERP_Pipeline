@@ -50,7 +50,31 @@ $count++
 
         stage('ERP_B-3_GetLastCommit') {
           steps {
-            powershell '"aaaa"'
+            powershell '''$SvnBin = "C:\\Program Files\\TortoiseSVN\\bin\\svn"
+$SvnRepositoryUrl = "https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk"
+
+$BaseOutputRootDirectory = "C:\\Livrables"
+$BaseOutputDirectory = "All_dotnet"
+$DestinationDirectory = "$($BaseOutputRootDirectory)\\$($BaseOutputDirectory)"
+$DestinationDirectoryName = "SvnFolderForDelivery"
+
+if ( -not (Test-Path "$($DestinationDirectory)\\$($DestinationDirectoryName)") -and ($($DestinationDirectoryName) -ne "") ) {
+    
+    New-Item -ItemType Directory "$($DestinationDirectory)\\$($DestinationDirectoryName)"
+    "`nLe repertoire \'$($DestinationDirectoryName)\' inexistant a ete créé dans \'$($DestinationDirectory)\'`n"
+    "-------------------------"
+}
+
+$DestinationDirectory="$($DestinationDirectory)\\$($DestinationDirectoryName)"
+
+if ( Test-Path $($DestinationDirectory) ) {
+    
+    try {
+        . "$($SvnBin)" info "$($SvnRepositoryUrl)" --username atjenkins --password atjenkins | Out-File "$($DestinationDirectory)\\svn_lastest_commit.txt"
+    } catch {
+        "An error occurred: $_"
+    }
+}'''
           }
         }
 
