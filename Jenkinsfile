@@ -9,7 +9,8 @@ pipeline {
 
     stage('ParallelStage_1') {
       environment {
-        DirToPurge = 'C:\\Livrables\\All_dotnet'
+        DirToPurgeEnv = 'C:\\Livrables\\All_dotnet'
+	      ExcludeFolderEnv = 'SvnFolderForDelivery'
       }
       parallel {
         stage('ERP_B-1_RestoreNuget') {
@@ -22,16 +23,15 @@ pipeline {
           steps {
             script {
               try {
-                powershell '''$DirectoryToPurgeEnv="$($env:DirToPurge)"
-#$DirectoryToPurge = "C:\\Livrables"
-$excludeFolderEnv="$($env:DirToPurge)"
-#$excludeFolder = "SvnFolderForDelivery"
+                powershell '''
+$DirectoryToPurge="$($env:DirToPurgeEnv)"
+$ExcludeFolder="$($env:ExcludeFolderEnv)"
 $count=0
 
 #Creer le repertoire de base du livrable s\'il n\'existe pas
 Try {
     if ( Test-Path $($DirectoryToPurge) ) {
-	    $getAllFilesLivrableDirectory=(gci $DirectoryToPurge | Where-Object { $_.Name -ne "$($excludeFolder)" })
+	    $getAllFilesLivrableDirectory=(gci $DirectoryToPurge | Where-Object { $_.Name -ne "$($ExcludeFolder)" })
 	    $getAllFilesLivrableDirectory |%{
 		    Remove-Item $($_.Fullname) -Recurse -Force
 		    "Fichier \'$($_.Fullname)\' supprimé"
