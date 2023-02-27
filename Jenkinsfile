@@ -51,7 +51,7 @@ $count++
         stage('ERP_B-3_GetLastCommit') {
 		      environment {
             SvnBinEnv = 'C:\\Program Files\\TortoiseSVN\\bin\\svn'
-            SvnRepositoryUrlEnv = 'https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk'
+            SvnRepositoryUrlEnv = 'https:////alliance-vm03//svn//ERP_ALLIANCE_ARMAND//trunk'
             BaseOutputRootDirectoryEnv = 'C:\\Livrables'
             BaseOutputDirectoryEnv = 'All_dotnet'
           }
