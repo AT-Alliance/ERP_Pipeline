@@ -9,7 +9,7 @@ pipeline {
 
     stage('ParallelStage_1') {
       environment {
-        DirToPurgeEnv = 'C:\\Livrables\\All_dotnet'
+        DirectoryToPurgeEnv = 'C:\\Livrables\\All_dotnet'
 	      ExcludeFolderEnv = 'SvnFolderForDelivery'
       }
       parallel {
@@ -24,8 +24,8 @@ pipeline {
             script {
               try {
                 powershell '''
-$DirectoryToPurge="$($env:DirToPurgeEnv)"
-$ExcludeFolder="$($env:ExcludeFolderEnv)"
+$DirectoryToPurgeEnv="$($env:DirectoryToPurgeEnv)"
+$ExcludeFolderEnv="$($env:ExcludeFolderEnv)"
 $count=0
 
 #Creer le repertoire de base du livrable s\'il n\'existe pas
@@ -34,11 +34,11 @@ Try {
 	    $getAllFilesLivrableDirectory=(gci $DirectoryToPurge | Where-Object { $_.Name -ne "$($ExcludeFolder)" })
 	    $getAllFilesLivrableDirectory |%{
 		    Remove-Item $($_.Fullname) -Recurse -Force
-		    "Fichier \'$($_.Fullname)\' supprimé"
+		    "Item \'$($_.Fullname)\' deleted"
 		    $count++
 	    }
 	    "---"
-	    "$($count) fichiers purgés dans \'$($DirectoryToPurge)\'"
+	    "$($count) item(s) purgés dans \'$($DirectoryToPurge)\'"
 	    "---"		  
     }
 } catch {
