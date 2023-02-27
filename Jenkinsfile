@@ -49,12 +49,19 @@ $count++
         }
 
         stage('ERP_B-3_GetLastCommit') {
+		      environment {
+            SvnBinEnv = 'C:\\Program Files\\TortoiseSVN\\bin\\svn'
+            SvnRepositoryUrlEnv = 'https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk'
+            BaseOutputRootDirectoryEnv = 'C:\\Livrables'
+            BaseOutputDirectoryEnv = 'All_dotnet'
+          }
           steps {
-            powershell '''$SvnBin = "C:\\Program Files\\TortoiseSVN\\bin\\svn"
-$SvnRepositoryUrl = "https://alliance-vm03/svn/ERP_ALLIANCE_ARMAND/trunk"
-
-$BaseOutputRootDirectory = "C:\\Livrables"
-$BaseOutputDirectory = "All_dotnet"
+            powershell '''
+$SvnBin = "$($env:SvnBinEnv)"
+$SvnRepositoryUrl = "$($env:SvnRepositoryUrlEnv)"
+$BaseOutputDirectory = "$($env:BaseOutputDirectoryEnv)"
+$BaseOutputRootDirectory = "$($env:BaseOutputRootDirectoryEnv)"
+$BaseOutputDirectory = "$($env:BaseOutputDirectoryEnv)"
 $DestinationDirectory = "$($BaseOutputRootDirectory)\\$($BaseOutputDirectory)"
 $DestinationDirectoryName = "SvnFolderForDelivery"
 
