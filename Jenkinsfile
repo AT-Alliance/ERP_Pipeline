@@ -22,21 +22,27 @@ pipeline {
           steps {
             script {
               try {
-                powershell '''
-$DirectoryToPurge="$($env:DirToPurge)"
-#$DirectoryToPurge="C:\\Livrables\\All_dotnet"
+                powershell '''$DirectoryToPurgeEnv="$($env:DirToPurge)"
+#$DirectoryToPurge = "C:\\Livrables"
+$excludeFolderEnv="$($env:DirToPurge)"
+#$excludeFolder = "SvnFolderForDelivery"
 $count=0
-#Creer le repertoire de base du livrable s\\\'il n\\\'existe pas
-if ( Test-Path $($DirectoryToPurge) ) {
-$getAllFilesLivrableDirectory=gci $DirectoryToPurge -File -Recurse
-$getAllFilesLivrableDirectory |%{
-Remove-Item $($_.Fullname) -Recurse -Force
-"Fichier \'$($_.Fullname)\' supprimé"
-$count++
-}
-"---"
-"$($count) fichiers purgés dans \'$($DirectoryToPurge)\'"
-"---"
+
+#Creer le repertoire de base du livrable s\'il n\'existe pas
+Try {
+    if ( Test-Path $($DirectoryToPurge) ) {
+	    $getAllFilesLivrableDirectory=(gci $DirectoryToPurge | Where-Object { $_.Name -ne "$($excludeFolder)" })
+	    $getAllFilesLivrableDirectory |%{
+		    Remove-Item $($_.Fullname) -Recurse -Force
+		    "Fichier \'$($_.Fullname)\' supprimé"
+		    $count++
+	    }
+	    "---"
+	    "$($count) fichiers purgés dans \'$($DirectoryToPurge)\'"
+	    "---"		  
+    }
+} catch {
+    "An error occurred: $_"
 }
 '''
                 println "Purge \'$DirToPurge\' success!!"
