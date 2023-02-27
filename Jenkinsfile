@@ -588,5 +588,11 @@ if ( Test-Path $($SourceDirectory) ) {
       }
     }
 
+    stage('ERP_H_CopyCommitFile_BuildDirectory') {
+      steps {
+        powershell '"aaa"'
+      }
+    }
+
   }
 }
