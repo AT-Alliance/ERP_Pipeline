@@ -37,7 +37,7 @@ $DestinationDirectory="$($DestinationDirectory)\\$($DestinationDirectoryName)"
 if ( Test-Path $($DestinationDirectory) ) {
     
     try {
-        . "$($SvnBin)" info "$($SvnRepositoryUrl)" --username atjenkins --password atjenkins --trust-server-cert-failures="other,unknown-ca,cn-mismatch,expired" | Out-File "$($DestinationDirectory)\\svn_lastest_commit.txt"
+        . "$($SvnBin)" info "$($SvnRepositoryUrl)" --username atjenkins --password atjenkins --trust-server-cert  --non-interactive | Out-File "$($DestinationDirectory)\\svn_lastest_commit.txt"
     } catch {
         "An error occurred: $_"
     }
